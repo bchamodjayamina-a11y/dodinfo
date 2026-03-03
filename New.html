@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pawsome - Your Pet Information Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf8f5;
+            --fg: #2d2a26;
+            --muted: #7a746b;
+            --accent: #c4704b;
+            --accent-light: #e8a88a;
+            --card: #ffffff;
+            --border: #e5e0d8;
+            --forest: #3d5a47;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--card);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(45, 42, 38, 0.08);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--forest);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--forest);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Page System - CSS Only SPA */
+        .page {
+            display: none;
+        }
+
+        #home {
+            display: block;
+        }
+
+        body:has(.page:target) .page {
+            display: none;
+        }
+
+        .page:target {
+            display: block;
+        }
+
+        /* Home Page Styles */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--bg) 0%, #f0ebe4 50%, #e8e2d8 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(ellipse, var(--accent-light) 0%, transparent 70%);
+            opacity: 0.3;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--forest);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(196, 112, 75, 0.3);
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(45, 42, 38, 0.15);
+            text-align: center;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .hero-card .icon {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-card h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            color: var(--forest);
+        }
+
+        .featured {
+            padding: 6rem 2rem;
+            background: var(--card);
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            color: var(--forest);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--muted);
+        }
+
+        .pets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .pet-card {
+            background: var(--bg);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .pet-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(45, 42, 38, 0.12);
+        }
+
+        .pet-card .emoji {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .pet-card h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.4rem;
+            color: var(--forest);
+            margin-bottom: 0.5rem;
+        }
+
+        .pet-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .stats {
+            padding: 4rem 2rem;
+            background: var(--forest);
+        }
+
+        .stats-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3rem;
+            color: var(--accent-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Pets Page Styles */
+        .page-header {
+            padding: 10rem 2rem 4rem;
+            background: linear-gradient(180deg, var(--forest) 0%, #2d4a37 100%);
+            text-align: center;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            opacity: 0.85;
+            font-size: 1.1rem;
+        }
+
+        .pets-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: -2rem auto 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pet-card-full {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(45, 42, 38, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .pet-card-full:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(45, 42, 38, 0.15);
+        }
+
+        .pet-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+        }
+
+        .pet-card-full h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.6rem;
+            color: var(--forest);
+            margin-bottom: 0.5rem;
+        }
+
+        .breed-count {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .pet-card-full p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pet-card-full .btn {
+            background: var(--forest);
+        }
+
+        .pet-card-full .btn:hover {
+            background: #2d4a37;
+        }
+
+        /* Pet Details Page Styles */
+        .page-header-accent {
+            background: linear-gradient(180deg, var(--accent) 0%, #a85a3a 100%);
+        }
+
+        .pet-nav {
+            padding: 2rem;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 70px;
+            z-index: 50;
+        }
+
+        .pet-nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .pet-nav-btn {
+            padding: 0.7rem 1.2rem;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            text-decoration: none;
+            color: var(--fg);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .pet-nav-btn:hover {
+            background: var(--forest);
+            color: white;
+            border-color: var(--forest);
+        }
+
+        .breeds-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .breed-section {
+            margin-bottom: 5rem;
+        }
+
+        .breed-section h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.2rem;
+            color: var(--forest);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pet-emoji {
+            font-size: 2.5rem;
+        }
+
+        .section-intro {
+            color: var(--muted);
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+
+        .breeds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .breed-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .breed-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .breed-card:hover {
+            box-shadow: 0 10px 30px rgba(45, 42, 38, 0.12);
+            transform: translateY(-5px);
+        }
+
+        .breed-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .breed-card h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            color: var(--forest);
+            margin-bottom: 0.8rem;
+        }
+
+        .breed-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .breed-tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: var(--bg);
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+
+        /* Contact Page Styles */
+        .contact-section {
+            max-width: 1200px;
+            margin: -3rem auto 4rem;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .contact-info {
+            background: var(--card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(45, 42, 38, 0.1);
+            height: fit-content;
+        }
+
+        .contact-info h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            color: var(--forest);
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .info-content h3 {
+            font-size: 1rem;
+            color: var(--forest);
+            margin-bottom: 0.3rem;
+        }
+
+        .info-content p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .info-content a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .info-content a:hover {
+            color: var(--forest);
+        }
+
+        .social-links {
+            margin-top: 2rem;
+        }
+
+        .social-links h3 {
+            font-size: 1rem;
+            color: var(--forest);
+            margin-bottom: 1rem;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--forest);
+            transform: translateY(-3px);
+        }
+
+        .contact-form {
+            background: var(--card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(45, 42, 38, 0.1);
+        }
+
+        .contact-form h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            color: var(--forest);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: var(--fg);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: var(--bg);
+            color: var(--fg);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(196, 112, 75, 0.15);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--forest);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(61, 90, 71, 0.3);
+        }
+
+        .map-section {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+
+        .map-placeholder {
+            background: linear-gradient(135deg, var(--forest) 0%, #2d4a37 100%);
+            height: 300px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .map-placeholder h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .map-placeholder p {
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--fg);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            margin-bottom: 1rem;
+        }
+
+        footer a {
+            color: var(--accent-light);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .contact-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content p {
+                margin: 0 auto 2rem;
+            }
+
+            .hero-image {
+                order: -1;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .breeds-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .pet-nav-container {
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 0.5rem;
+            }
+
+            .pet-nav-btn {
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero {
+                padding: 10rem 1rem 3rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .breed-section h2 {
+                font-size: 1.6rem;
+            }
+
+            .contact-info,
+            .contact-form {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pet-card-full {
+            animation: slideUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .pet-card-full:nth-child(1) { animation-delay: 0.1s; }
+        .pet-card-full:nth-child(2) { animation-delay: 0.15s; }
+        .pet-card-full:nth-child(3) { animation-delay: 0.2s; }
+        .pet-card-full:nth-child(4) { animation-delay: 0.25s; }
+        .pet-card-full:nth-child(5) { animation-delay: 0.3s; }
+        .pet-card-full:nth-child(6) { animation-delay: 0.35s; }
+        .pet-card-full:nth-child(7) { animation-delay: 0.4s; }
+        .pet-card-full:nth-child(8) { animation-delay: 0.45s; }
+        .pet-card-full:nth-child(9) { animation-delay: 0.5s; }
+        .pet-card-full:nth-child(10) { animation-delay: 0.55s; }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .breed-card {
+            opacity: 0;
+            animation: fadeUp 0.5s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="#home" class="logo">Paw<span>some</span></a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#pets">Pets</a></li>
+                <li><a href="#details">Pet Details</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <section id="home" class="page">
+        <div class="hero">
+            <div class="hero-container">
+                <div class="hero-content fade-in">
+                    <h1>Discover Your Perfect Companion</h1>
+                    <p>Explore our comprehensive guide to 10 amazing pet types and over 50 unique breeds. Find the perfect furry, feathered, or scaly friend for your lifestyle.</p>
+                    <a href="#pets" class="btn">Explore Pets</a>
+                </div>
+                <div class="hero-image">
+                    <div class="hero-card">
+                        <span class="icon">&#128062;</span>
+                        <h3>Find Your Match</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="featured">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Popular Pet Categories</h2>
+                    <p>Click on any pet type to learn more about their unique breeds</p>
+                </div>
+                <div class="pets-grid">
+                    <div class="pet-card">
+                        <span class="emoji">&#128021;</span>
+                        <h3>Dogs</h3>
+                        <p>Loyal companions with 6 amazing breeds to explore</p>
+                    </div>
+                    <div class="pet-card">
+                        <span class="emoji">&#128008;</span>
+                        <h3>Cats</h3>
+                        <p>Elegant and independent with 6 unique breeds</p>
+                    </div>
+                    <div class="pet-card">
+                        <span class="emoji">&#128038;</span>
+                        <h3>Birds</h3>
+                        <p>Beautiful songbirds with 5 delightful species</p>
+                    </div>
+                    <div class="pet-card">
+                        <span class="emoji">&#128031;</span>
+                        <h3>Fish</h3>
+                        <p>Peaceful swimmers with 5 stunning varieties</p>
+                    </div>
+                    <div class="pet-card">
+                        <span class="emoji">&#128048;</span>
+                        <h3>Rabbits</h3>
+                        <p>Gentle and cuddly with 5 adorable breeds</p>
+                    </div>
+                    <div class="pet-card">
+                        <span class="emoji">&#128057;</span>
+                        <h3>Hamsters</h3>
+                        <p>Tiny and energetic with 5 fun varieties</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>10</h3>
+                    <p>Pet Types</p>
+                </div>
+                <div class="stat-item">
+                    <h3>55+</h3>
+                    <p>Unique Breeds</p>
+                </div>
+                <div class="stat-item">
+                    <h3>100%</h3>
+                    <p>Love Guaranteed</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>2024 Pawsome Pet Guide. Made with care for pet lovers everywhere.</p>
+            <p><a href="#contact">Get in Touch</a> | <a href="#pets">Browse Pets</a></p>
+        </footer>
+    </section>
+
+    <!-- PETS PAGE -->
+    <section id="pets" class="page">
+        <div class="page-header">
+            <h1>All Pet Types</h1>
+            <p>Discover 10 amazing pet categories with detailed breed information</p>
+        </div>
+
+        <section class="pets-section">
+            <div class="pets-grid">
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#128021;</div>
+                    <h3>Dogs</h3>
+                    <span class="breed-count">6 Breeds Available</span>
+                    <p>Man's best friend. Loyal, loving, and endlessly devoted companions for families and individuals alike.</p>
+                    <a href="#details" class="btn">View Breeds</a>
+                </div>
+
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#128008;</div>
+                    <h3>Cats</h3>
+                    <span class="breed-count">6 Breeds Available</span>
+                    <p>Elegant and independent. Cats bring grace and companionship to any home with their unique personalities.</p>
+                    <a href="#details" class="btn">View Breeds</a>
+                </div>
+
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#128038;</div>
+                    <h3>Birds</h3>
+                    <span class="breed-count">5 Species Available</span>
+                    <p>Beautiful and melodious. Pet birds fill your home with song and vibrant colors.</p>
+                    <a href="#details" class="btn">View Species</a>
+                </div>
+
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#128031;</div>
+                    <h3>Fish</h3>
+                    <span class="breed-count">5 Varieties Available</span>
+                    <p>Peaceful and mesmerizing. An aquarium brings tranquility and natural beauty to any space.</p>
+                    <a href="#details" class="btn">View Varieties</a>
+                </div>
+
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#128048;</div>
+                    <h3>Rabbits</h3>
+                    <span class="breed-count">5 Breeds Available</span>
+                    <p>Gentle and social. Rabbits make wonderful indoor pets with their affectionate nature.</p>
+                    <a href="#details" class="btn">View Breeds</a>
+                </div>
+
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#128057;</div>
+                    <h3>Hamsters</h3>
+                    <span class="breed-count">5 Types Available</span>
+                    <p>Small and energetic. Perfect for beginners, hamsters are entertaining and easy to care for.</p>
+                    <a href="#details" class="btn">View Types</a>
+                </div>
+
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#128034;</div>
+                    <h3>Turtles</h3>
+                    <span class="breed-count">5 Species Available</span>
+                    <p>Calm and long-lived. Turtles are fascinating pets that can be companions for decades.</p>
+                    <a href="#details" class="btn">View Species</a>
+                </div>
+
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#129436;</div>
+                    <h3>Parrots</h3>
+                    <span class="breed-count">5 Species Available</span>
+                    <p>Intelligent and vocal. Parrots form deep bonds and can learn to speak and perform tricks.</p>
+                    <a href="#details" class="btn">View Species</a>
+                </div>
+
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#128000;</div>
+                    <h3>Guinea Pigs</h3>
+                    <span class="breed-count">5 Breeds Available</span>
+                    <p>Social and vocal. Guinea pigs are gentle creatures that love interaction and companionship.</p>
+                    <a href="#details" class="btn">View Breeds</a>
+                </div>
+
+                <div class="pet-card-full">
+                    <div class="pet-icon">&#128014;</div>
+                    <h3>Horses</h3>
+                    <span class="breed-count">5 Breeds Available</span>
+                    <p>Majestic and powerful. Horses offer a unique bond and are perfect for those with space and passion.</p>
+                    <a href="#details" class="btn">View Breeds</a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>2024 Pawsome Pet Guide. Made with care for pet lovers everywhere.</p>
+            <p><a href="#contact">Get in Touch</a> | <a href="#home">Back Home</a></p>
+        </footer>
+    </section>
+
+    <!-- PET DETAILS PAGE -->
+    <section id="details" class="page">
+        <div class="page-header page-header-accent">
+            <h1>Pet Breeds and Details</h1>
+            <p>Explore detailed information about each pet type and their unique breeds</p>
+        </div>
+
+        <div class="pet-nav">
+            <div class="pet-nav-container">
+                <a href="#dogs" class="pet-nav-btn">Dogs</a>
+                <a href="#cats" class="pet-nav-btn">Cats</a>
+                <a href="#birds" class="pet-nav-btn">Birds</a>
+                <a href="#fish" class="pet-nav-btn">Fish</a>
+                <a href="#rabbits" class="pet-nav-btn">Rabbits</a>
+                <a href="#hamsters" class="pet-nav-btn">Hamsters</a>
+                <a href="#turtles" class="pet-nav-btn">Turtles</a>
+                <a href="#parrots" class="pet-nav-btn">Parrots</a>
+                <a href="#guineapigs" class="pet-nav-btn">Guinea Pigs</a>
+                <a href="#horses" class="pet-nav-btn">Horses</a>
+            </div>
+        </div>
+
+        <div class="breeds-container">
+            <!-- Dogs -->
+            <section class="breed-section" id="dogs">
+                <h2><span class="pet-emoji">&#128021;</span> Dogs</h2>
+                <p class="section-intro">Dogs are known for their loyalty, intelligence, and companionship. They come in various sizes and temperaments to suit different lifestyles.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Sporting</span>
+                        <h3>Labrador Retriever</h3>
+                        <p>Friendly, outgoing, and active. Labs are excellent family dogs known for their gentle nature and love of water. They make great companions for children and are highly trainable.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Herding</span>
+                        <h3>German Shepherd</h3>
+                        <p>Intelligent, courageous, and confident. German Shepherds excel as working dogs and family protectors. They're highly trainable and form strong bonds with their families.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Sporting</span>
+                        <h3>Golden Retriever</h3>
+                        <p>Intelligent, friendly, and devoted. Goldens are beloved for their gentle temperament and beautiful golden coats. They're excellent therapy and assistance dogs.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Non-Sporting</span>
+                        <h3>Bulldog</h3>
+                        <p>Calm, courageous, and friendly. Bulldogs are gentle companions with a distinctive wrinkled face. Despite their tough appearance, they're affectionate and great with children.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Hound</span>
+                        <h3>Beagle</h3>
+                        <p>Merry, friendly, and curious. Beagles are small hounds with excellent scent abilities. They're pack dogs that thrive on companionship and have a distinctive howl.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Non-Sporting</span>
+                        <h3>Poodle</h3>
+                        <p>Proud, active, and very smart. Poodles come in three sizes and are known for their hypoallergenic coats. They excel in obedience and agility competitions.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cats -->
+            <section class="breed-section" id="cats">
+                <h2><span class="pet-emoji">&#128008;</span> Cats</h2>
+                <p class="section-intro">Cats are independent yet affectionate companions. Each breed has unique characteristics, from coat patterns to personality traits.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Longhair</span>
+                        <h3>Persian</h3>
+                        <p>Graceful, gentle, and quiet. Persians are known for their luxurious long coats and sweet expressions. They prefer calm environments and make excellent lap cats.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Large</span>
+                        <h3>Maine Coon</h3>
+                        <p>Friendly, intelligent, and dog-like. Maine Coons are gentle giants with tufted ears and bushy tails. They're known for their hunting skills and affectionate nature.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Shorthair</span>
+                        <h3>Siamese</h3>
+                        <p>Vocal, social, and intelligent. Siamese cats are known for their striking blue eyes and pointed coloring. They form strong bonds and love to "talk" to their owners.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Shorthair</span>
+                        <h3>British Shorthair</h3>
+                        <p>Calm, independent, and easygoing. British Shorthairs have round faces and dense, plush coats. They're undemanding companions perfect for busy households.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Exotic</span>
+                        <h3>Bengal</h3>
+                        <p>Athletic, playful, and energetic. Bengals have striking wild leopard-like spots. They're highly active cats that need plenty of stimulation and interaction.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Semi-Longhair</span>
+                        <h3>Ragdoll</h3>
+                        <p>Gentle, affectionate, and relaxed. Ragdolls go limp when held, hence their name. They have beautiful blue eyes and semi-long coats with point coloration.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Birds -->
+            <section class="breed-section" id="birds">
+                <h2><span class="pet-emoji">&#128038;</span> Birds</h2>
+                <p class="section-intro">Pet birds bring song and color to any home. From tiny finches to clever cockatiels, each species offers unique companionship.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Songbird</span>
+                        <h3>Canary</h3>
+                        <p>Beautiful singers with vibrant yellow plumage. Canaries are relatively easy to care for and fill homes with their melodious songs. Males are typically the singers.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Small</span>
+                        <h3>Finch</h3>
+                        <p>Social, active, and colorful. Finches are best kept in pairs or groups. They're entertaining to watch and have cheerful chirps rather than complex songs.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Medium</span>
+                        <h3>Cockatiel</h3>
+                        <p>Friendly, intelligent, and vocal. Cockatiels can learn to whistle tunes and mimic sounds. They have distinctive crests that reflect their mood.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Small</span>
+                        <h3>Lovebird</h3>
+                        <p>Affectionate, playful, and social. Lovebirds form strong bonds with their mates or owners. They're small parrots with big personalities and vibrant colors.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Small Parrot</span>
+                        <h3>Budgerigar</h3>
+                        <p>Friendly, talkative, and intelligent. Budgies are popular beginner birds that can learn extensive vocabularies. They come in various colors beyond the classic green and yellow.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Fish -->
+            <section class="breed-section" id="fish">
+                <h2><span class="pet-emoji">&#128031;</span> Fish</h2>
+                <p class="section-intro">Aquarium fish bring tranquility and natural beauty to any space. They range from beginner-friendly goldfish to exotic tropical species.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Freshwater</span>
+                        <h3>Goldfish</h3>
+                        <p>Classic, hardy, and long-lived. Goldfish come in many varieties from common to fancy breeds with distinctive features. They can live for decades with proper care.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Freshwater</span>
+                        <h3>Betta</h3>
+                        <p>Beautiful, solitary, and relatively easy to care for. Male bettas have stunning flowing fins but must be kept alone. They come in countless color combinations.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Livebearer</span>
+                        <h3>Guppy</h3>
+                        <p>Colorful, active, and easy to breed. Guppies are perfect for beginners and community tanks. Males display brilliant colors while females are larger and plainer.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Tropical</span>
+                        <h3>Angelfish</h3>
+                        <p>Elegant, graceful, and distinctive. Angelfish have tall, triangular bodies and long fins. They're cichlids with semi-aggressive temperaments in community tanks.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Schooling</span>
+                        <h3>Tetra</h3>
+                        <p>Peaceful, schooling, and vibrant. Tetras are best kept in groups of six or more. Neon tetras are especially popular for their glowing blue and red stripes.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rabbits -->
+            <section class="breed-section" id="rabbits">
+                <h2><span class="pet-emoji">&#128048;</span> Rabbits</h2>
+                <p class="section-intro">Rabbits are social, intelligent pets that can be litter-trained and even learn tricks. Each breed has unique size and personality traits.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Small</span>
+                        <h3>Holland Lop</h3>
+                        <p>Sweet, calm, and adorable. Holland Lops have characteristic floppy ears and compact bodies. They're one of the most popular rabbit breeds for their gentle temperament.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Dwarf</span>
+                        <h3>Netherland Dwarf</h3>
+                        <p>Tiny, energetic, and curious. These are among the smallest rabbit breeds. They have round heads and short ears, making them look perpetually baby-like.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Small</span>
+                        <h3>Mini Rex</h3>
+                        <p>Gentle, friendly, and velvety. Mini Rex rabbits have incredibly soft, plush coats. They come in many colors and make wonderful companion pets.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Giant</span>
+                        <h3>Flemish Giant</h3>
+                        <p>Docile, gentle, and impressive. Flemish Giants are one of the largest rabbit breeds, often called "gentle giants." They're calm and dog-like in temperament.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Small</span>
+                        <h3>Lionhead</h3>
+                        <p>Friendly, playful, and distinctive. Lionheads have a wooly mane around their heads like lions. They're relatively new but increasingly popular as pets.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hamsters -->
+            <section class="breed-section" id="hamsters">
+                <h2><span class="pet-emoji">&#128057;</span> Hamsters</h2>
+                <p class="section-intro">Hamsters are popular beginner pets known for their cheek pouches and nocturnal activity. Different species vary in size and social needs.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Large</span>
+                        <h3>Syrian Hamster</h3>
+                        <p>Solitary, friendly, and easy to handle. Syrian hamsters are the largest and most popular pet hamsters. They must live alone as adults to prevent fighting.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Dwarf</span>
+                        <h3>Dwarf Campbell</h3>
+                        <p>Social, active, and quick. Campbell's dwarfs can sometimes live in same-sex pairs. They're smaller than Syrians and require gentle, patient handling.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Dwarf</span>
+                        <h3>Roborovski</h3>
+                        <p>Fast, curious, and entertaining. Robos are the smallest and fastest hamsters. They're better for watching than handling due to their speed and size.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Dwarf</span>
+                        <h3>Chinese Hamster</h3>
+                        <p>Quiet, gentle, and mouse-like. Chinese hamsters have longer tails than other species. They're good climbers and can be tamed with patience.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Dwarf</span>
+                        <h3>Winter White</h3>
+                        <p>Adaptable, social, and color-changing. Winter Whites turn white in winter conditions. They're similar to Campbell's but with a rounder body shape.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Turtles -->
+            <section class="breed-section" id="turtles">
+                <h2><span class="pet-emoji">&#128034;</span> Turtles</h2>
+                <p class="section-intro">Turtles are fascinating reptiles that can live for decades. They require specific habitat conditions and make rewarding pets for dedicated owners.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Aquatic</span>
+                        <h3>Red-Eared Slider</h3>
+                        <p>Popular, active, and recognizable. Red-eared sliders have distinctive red marks near their ears. They need both swimming space and basking areas in their habitat.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Terrestrial</span>
+                        <h3>Box Turtle</h3>
+                        <p>Docile, long-lived, and personable. Box turtles can fully close their shells for protection. They recognize their owners and have distinct personalities.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Aquatic</span>
+                        <h3>Painted Turtle</h3>
+                        <p>Beautiful, hardy, and active. Painted turtles have colorful shell patterns in red and yellow. They're native to North America and popular as pets.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Terrestrial</span>
+                        <h3>Russian Tortoise</h3>
+                        <p>Hardy, active, and personable. Russian tortoises are excellent beginner tortoises. They're small, hardy, and can live outdoors in appropriate climates.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Aquatic</span>
+                        <h3>Map Turtle</h3>
+                        <p>Distinctive, shy, and specialized. Map turtles have map-like patterns on their shells. They need clean water and are more sensitive than other aquatic species.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Parrots -->
+            <section class="breed-section" id="parrots">
+                <h2><span class="pet-emoji">&#129436;</span> Parrots</h2>
+                <p class="section-intro">Parrots are highly intelligent birds capable of learning words, tricks, and forming deep bonds with their owners. They require significant commitment.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Large</span>
+                        <h3>Macaw</h3>
+                        <p>Spectacular, intelligent, and long-lived. Macaws are among the largest parrots with vibrant colors and powerful beaks. They need extensive space and interaction.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Medium</span>
+                        <h3>African Grey</h3>
+                        <p>Brilliant, sensitive, and talkative. African Greys are considered the most intelligent parrots. They can learn hundreds of words and understand concepts.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Large</span>
+                        <h3>Cockatoo</h3>
+                        <p>Affectionate, dramatic, and demanding. Cockatoos form intense bonds with their owners. They're known for their crests and need significant daily attention.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Small</span>
+                        <h3>Conure</h3>
+                        <p>Playful, colorful, and vocal. Conures are smaller parrots with big personalities. They're active and playful, perfect for those wanting a parrot without the size.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Medium</span>
+                        <h3>Eclectus</h3>
+                        <p>Calm, beautiful, and sexually dimorphic. Male and female Eclectus look completely different. They're gentler than many parrots and have striking plumage.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Guinea Pigs -->
+            <section class="breed-section" id="guineapigs">
+                <h2><span class="pet-emoji">&#128000;</span> Guinea Pigs</h2>
+                <p class="section-intro">Guinea pigs are social rodents that "wheek" with excitement and love interaction. They're great for families and relatively easy to care for.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Short-Hair</span>
+                        <h3>American</h3>
+                        <p>Classic, gentle, and easy to groom. American guinea pigs have smooth, short coats. They're one of the most common breeds, perfect for beginners.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Rough-Coat</span>
+                        <h3>Abyssinian</h3>
+                        <p>Distinctive, social, and active. Abyssinians have rosettes (whorls) in their coat creating a unique appearance. They're known for their friendly personalities.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Long-Hair</span>
+                        <h3>Peruvian</h3>
+                        <p>Gorgeous, high-maintenance, and dramatic. Peruvian guinea pigs have long, flowing coats that grow continuously. They need daily grooming commitment.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Hairless</span>
+                        <h3>Skinny Pig</h3>
+                        <p>Unique, warm, and affectionate. Skinny pigs are nearly hairless with soft skin. They need extra warmth and are becoming increasingly popular as pets.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Short-Hair</span>
+                        <h3>Teddy</h3>
+                        <p>Cuddly, dense-coated, and sweet. Teddy guinea pigs have a plush, teddy bear-like coat. They're friendly and relatively easy to care for.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Horses -->
+            <section class="breed-section" id="horses">
+                <h2><span class="pet-emoji">&#128014;</span> Horses</h2>
+                <p class="section-intro">Horses are magnificent animals that offer partnership, sport, and companionship. Each breed has unique characteristics suited for different disciplines.</p>
+                <div class="breeds-grid">
+                    <div class="breed-card">
+                        <span class="breed-tag">Light</span>
+                        <h3>Arabian</h3>
+                        <p>Elegant, intelligent, and enduring. Arabians are one of the oldest breeds, known for their distinctive dished faces and high tail carriage. They excel in endurance riding.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Light</span>
+                        <h3>Thoroughbred</h3>
+                        <p>Athletic, spirited, and versatile. Thoroughbreds are best known for racing but excel in many disciplines. They're hot-blooded and need experienced handlers.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Stock</span>
+                        <h3>Quarter Horse</h3>
+                        <p>Docile, muscular, and versatile. Quarter Horses are America's most popular breed. They excel at western riding, ranch work, and are known for their calm temperament.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Wild</span>
+                        <h3>Mustang</h3>
+                        <p>Hardy, intelligent, and spirited. Mustangs are wild horses of the American West. When adopted and trained, they become loyal, sure-footed partners.</p>
+                    </div>
+                    <div class="breed-card">
+                        <span class="breed-tag">Draft</span>
+                        <h3>Clydesdale</h3>
+                        <p>Gentle, massive, and recognizable. Clydesdales are famous draft horses with distinctive feathered feet. Despite their size, they're known for calm, gentle temperaments.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>2024 Pawsome Pet Guide. Made with care for pet lovers everywhere.</p>
+            <p><a href="#contact">Get in Touch</a> | <a href="#pets">Back to Pets</a></p>
+        </footer>
+    </section>
+
+    <!-- CONTACT PAGE -->
+    <section id="contact" class="page">
+        <div class="page-header">
+            <h1>Get in Touch</h1>
+            <p>We'd love to hear from you. Reach out with questions or suggestions!</p>
+        </div>
+
+        <section class="contact-section">
+            <div class="contact-info">
+                <h2>Contact Information</h2>
+                
+                <div class="info-item">
+                    <div class="info-icon">&#128205;</div>
+                    <div class="info-content">
+                        <h3>Address</h3>
+                        <p>123 Pet Street<br>Animal City, AC 12345</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">&#128222;</div>
+                    <div class="info-content">
+                        <h3>Phone</h3>
+                        <p><a href="tel:+1234567890">(123) 456-7890</a></p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">&#128231;</div>
+                    <div class="info-content">
+                        <h3>Email</h3>
+                        <p><a href="mailto:hello@pawsome.com">hello@pawsome.com</a></p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">&#128336;</div>
+                    <div class="info-content">
+                        <h3>Hours</h3>
+                        <p>Mon - Fri: 9am - 6pm<br>Sat - Sun: 10am - 4pm</p>
+                    </div>
+                </div>
+
+                <div class="social-links">
+                    <h3>Follow Us</h3>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon" title="Facebook">&#128101;</a>
+                        <a href="#" class="social-icon" title="Twitter">&#128038;</a>
+                        <a href="#" class="social-icon" title="Instagram">&#128247;</a>
+                        <a href="#" class="social-icon" title="YouTube">&#9654;</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <h2>Send us a Message</h2>
+                <form action="#" method="post">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="john@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <select id="subject" name="subject">
+                            <option value="general">General Inquiry</option>
+                            <option value="adoption">Pet Adoption Info</option>
+                            <option value="care">Pet Care Questions</option>
+                            <option value="feedback">Website Feedback</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Your Message</label>
+                        <textarea id="message" name="message" placeholder="Tell us how we can help you..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="map-section">
+            <div class="map-placeholder">
+                <div>
+                    <h3>Visit Our Location</h3>
+                    <p>123 Pet Street, Animal City</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>2024 Pawsome Pet Guide. Made with care for pet lovers everywhere.</p>
+            <p><a href="#home">Back Home</a> | <a href="#pets">Browse Pets</a></p>
+        </footer>
+    </section>
+</body>
+</html>
